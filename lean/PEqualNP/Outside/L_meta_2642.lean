@@ -33,7 +33,7 @@ theorem fold_getD_lt (gs : List Gate) (w : List Bool) (i : ℕ) (hi : i < w.leng
 theorem getD_ge (w : List Bool) (i : ℕ) (hi : w.length ≤ i) : w.getD i false = false :=
   List.getD_eq_default _ _ hi
 
-/-! ### Erasing one gate -/
+/-! Erasing one gate -/
 
 /-- Where wire `i` of the erased circuit sits in the old one (`k = n + m`). -/
 def up (k i : ℕ) : ℕ := if i < k then i else i + 1
@@ -178,7 +178,7 @@ theorem erase_fanin (n : ℕ) (C : Circuit) (m p : ℕ) (hm : m < C.gates.length
     obtain ⟨h1, h2⟩ := hC g' (List.mem_of_mem_drop hg')
     exact ⟨h1, by simpa [ren] using h2⟩
 
-/-! ### Fixing two inputs to false without new gates -/
+/-! Fixing two inputs to false without new gates -/
 
 /-- Reads of input wires `a` and `b` go to wire `B`, which does not exist. -/
 def sub (a b B i : ℕ) : ℕ := if i = a ∨ i = b then B else i
@@ -265,7 +265,7 @@ theorem fix_fanin (a b B : ℕ) (C : Circuit) (hC : PEqualNP.MetaComplexity.FanI
   obtain ⟨h1, h2⟩ := hC g' hg'
   exact ⟨h1, by simpa using h2⟩
 
-/-! ### The chain of erasures -/
+/-! The chain of erasures -/
 
 theorem main : ∀ (x1 x2 : ℕ) (x3 x4 : Fin x1) (x5 : ℕ → PEqualNP.CircuitLowerBounds.Circuit),   PEqualNP.MetaComplexity.FanInTwo (x5 (0 : ℕ)) →     (∀ x7 < x2,         ∃ (x9 : ℕ) (x10 : ℕ),           x9 < (x5 x7).size ∧             (x10 < x1 + x9 ∨ x1 + (x5 x7).size ≤ x10) ∧               x5 (x7 + (1 : ℕ)) = PEqualNP.CircuitMoves.eraseGate x1 (x5 x7) x9 x10 ∧                 ((∀ (x11 : Fin x1 → Bool),                     have x12 : List Bool := (x5 x7).wires (List.ofFn (Function.update (Function.update x11 x3 Bool.false) x4 Bool.false));                     x12.getD (x1 + x9) Bool.false = x12.getD x10 Bool.false) ∨                   (x5 x7).output ≠ x1 + x9 ∧ ∀ x11 ∈ List.drop (x9 + (1 : ℕ)) (x5 x7).gates, x1 + x9 ∉ x11.inputs)) →       ∃ (x8 : PEqualNP.CircuitLowerBounds.Circuit), PEqualNP.MetaComplexity.FanInTwo x8 ∧ x8.size + x2 = (x5 (0 : ℕ)).size ∧ ∀ (x9 : Fin x1 → Bool), x8.eval (List.ofFn x9) = (x5 (0 : ℕ)).eval (List.ofFn (Function.update (Function.update x9 x3 Bool.false) x4 Bool.false)) := by
   intro n k a b Cs h0 hstep
